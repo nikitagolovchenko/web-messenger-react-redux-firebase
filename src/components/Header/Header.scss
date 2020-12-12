@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: rgb(39, 39, 245);
+  color: white;
+
+  a {
+    color: inherit;
+
+    &:hover {
+      color: orange;
+    }
+  }
+
+  .logo {
+    font-size: 24px;
+    margin-right: 15px;
+    font-weight: 700;
+  }
+
+  ul {
+    display: flex;
+    align-items: center;
+
+    li {
+      margin: 0 10px;
+    }
+  }
+
+  .menu {
+    font-weight: 500;
+  }
+}
