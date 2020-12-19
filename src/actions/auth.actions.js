@@ -25,11 +25,13 @@ export const signup = user => {
           .then(() => {
             // записываем в бд:
             db.collection('users')
-              .add({
+              .doc(data.user.uid) // название документа равно uid
+              .set({
                 firstName: user.firstName,
                 lastName: user.lastName,
                 uid: data.user.uid,
                 createdAt: new Date(),
+                isOnline: true,
               })
               .then(() => {
                 // succeful
@@ -125,5 +127,41 @@ export const isLoggedInUser = () => {
         payload: 'Login again please',
       });
     }
+  };
+};
+
+export const logout = uid => {
+  return dispatch => {
+    dispatch({
+      type: `${authConstants.USER_LOGOUT}_REQUEST`,
+    });
+
+    const db = firebase.firestore();
+    db.collection('users')
+      .doc(uid)
+      .update({
+        isOnline: false,
+      })
+      .then(() => {
+        firebase
+          .auth()
+          .signOut()
+          .then(() => {
+            localStorage.clear();
+            dispatch({
+              type: `${authConstants.USER_LOGOUT}_SUCCESS`,
+            });
+          })
+          .catch(error => {
+            console.error(error.message);
+            dispatch({
+              type: `${authConstants.USER_LOGOUT}_FAILURE`,
+              payload: error.message,
+            });
+          });
+      })
+      .catch(error => {
+        console.error(error.message);
+      });
   };
 };

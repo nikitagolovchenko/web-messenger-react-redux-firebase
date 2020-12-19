@@ -1,10 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
+import { logout } from '../../actions/auth.actions';
 import './Header.scss';
 
 const Header = props => {
   const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
   return (
     <header className='header'>
@@ -30,7 +32,12 @@ const Header = props => {
       {auth.authenticated ? (
         <ul className='menu'>
           <li>
-            <Link to={'#'} onClick={props.logout}>
+            <Link
+              to={'#'}
+              onClick={() => {
+                dispatch(logout(auth.uid));
+              }}
+            >
               Logout
             </Link>
           </li>

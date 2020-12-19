@@ -16,7 +16,6 @@ const authReducer = (state = initState, action) => {
         ...state,
         authenticating: true,
       };
-
     case `${authConstants.USER_LOGIN}_SUCCESS`:
       return {
         ...state,
@@ -24,7 +23,6 @@ const authReducer = (state = initState, action) => {
         authenticated: true,
         authenticating: false,
       };
-
     case `${authConstants.USER_LOGIN}_FAILURE`:
       return {
         ...state,
@@ -32,7 +30,20 @@ const authReducer = (state = initState, action) => {
         authenticating: false,
         error: action.payload,
       };
-
+    case `${authConstants.USER_LOGOUT}_REQUEST`:
+      return {
+        ...state,
+      };
+    case `${authConstants.USER_LOGOUT}_SUCCESS`:
+      return {
+        ...state,
+        ...initState,
+      };
+    case `${authConstants.USER_LOGOUT}_FAILURE`:
+      return {
+        ...state,
+        error: action.payload,
+      };
     default:
       return state;
   }
