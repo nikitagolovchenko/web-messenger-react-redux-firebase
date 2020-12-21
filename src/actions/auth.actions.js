@@ -79,24 +79,35 @@ export const signin = user => {
       .auth()
       .signInWithEmailAndPassword(user.email, user.password)
       .then(data => {
-        const name = data.user.displayName.split(' ');
-        const firstName = name[0];
-        const lastName = name[1];
-        const loggedInUser = {
-          firstName,
-          lastName,
-          uid: data.user.uid,
-          email: data.user.email,
-        };
+        const db = firebase.firestore();
+        db.collection('users')
+          .doc(data.user.uid)
+          .update({
+            isOnline: true,
+          })
+          .then(() => {
+            const name = data.user.displayName.split(' ');
+            const firstName = name[0];
+            const lastName = name[1];
+            const loggedInUser = {
+              firstName,
+              lastName,
+              uid: data.user.uid,
+              email: data.user.email,
+            };
 
-        localStorage.setItem('user', JSON.stringify(loggedInUser));
+            localStorage.setItem('user', JSON.stringify(loggedInUser));
 
-        dispatch({
-          type: `${authConstants.USER_LOGIN}_SUCCESS`,
-          payload: {
-            user: loggedInUser,
-          },
-        });
+            dispatch({
+              type: `${authConstants.USER_LOGIN}_SUCCESS`,
+              payload: {
+                user: loggedInUser,
+              },
+            });
+          })
+          .catch(error => {
+            console.error(error.message);
+          });
       })
       .catch(error => {
         console.error(error);
