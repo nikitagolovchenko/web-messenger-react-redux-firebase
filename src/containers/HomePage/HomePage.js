@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getRealtimeUsers } from '../../actions/user.actions';
+import {
+  getRealtimeComversations,
+  getRealtimeUsers,
+  updateMessage,
+} from '../../actions/user.actions';
 import Layout from '../../components/Layout/Layout';
 import styles from './HomePage.scss';
 
@@ -20,13 +24,14 @@ const User = props => {
           flex: 1,
           display: 'flex',
           justifyContent: 'space-between',
+          alignItems: 'center',
           margin: '0 10px',
         }}
       >
         <span
           style={{ fontWeight: 500 }}
         >{`${user.firstName} ${user.lastName}`}</span>
-        <span>{user.isOnline ? 'online' : 'offline'}</span>
+        <span className={user.isOnline ? 'user-status online' : 'user-status'}></span>
       </div>
     </div>
   );
@@ -35,6 +40,8 @@ const User = props => {
 const HomePage = props => {
   const [chatStarted, setChatStarted] = useState(false);
   const [chatUser, setChatUser] = useState('');
+  const [message, setMessage] = useState('');
+  const [userUid, setUserUid] = useState(null);
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
   const user = useSelector(state => state.user);
@@ -60,6 +67,25 @@ const HomePage = props => {
   const initChat = user => {
     setChatStarted(true);
     setChatUser(`${user.firstName} ${user.lastName}`);
+    setUserUid(user.uid);
+
+    dispatch(getRealtimeComversations({ uid_1: auth.uid, uid_2: user.uid }));
+  };
+
+  const submitMessage = (e) => {
+    e.preventDefault();
+
+    const msgObj = {
+      user_uid_1: auth.uid,
+      user_uid_2: userUid,
+      message,
+    };
+
+    if (message !== '') {
+      dispatch(updateMessage(msgObj)).then(() => {
+        setMessage('');
+      });
+    }
   };
 
   return (
@@ -76,17 +102,28 @@ const HomePage = props => {
         <div className='chatArea'>
           <div className='chatHeader'>{chatStarted ? chatUser : ''}</div>
           <div className='messageSections'>
-            {chatStarted ? (
-              <div style={{ textAlign: 'left' }}>
-                <p className='messageStyle'>Hello User</p>
-              </div>
-            ) : null}
+            {chatStarted
+              ? user.conversations.map(con => (
+                  <div
+                    style={{
+                      textAlign: con.user_uid_1 === auth.uid ? 'right' : 'left',
+                    }}
+                    key={con.createdAt}
+                  >
+                    <p className='messageStyle'>{con.message}</p>
+                  </div>
+                ))
+              : null}
           </div>
           {chatStarted ? (
-            <div className='chatControls'>
-              <textarea />
-              <button>Send</button>
-            </div>
+            <form className='chatControls' onSubmit={submitMessage}>
+              <input type="text"
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                placeholder='White Message'
+              />
+              <button type="submit">Send</button>
+            </form>
           ) : null}
         </div>
       </section>

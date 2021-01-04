@@ -36,7 +36,7 @@
   height: 50px;
   bottom: 0;
 }
-.chatControls textarea{
+.chatControls input{
   width: 90%;
 }
 .chatControls button{
@@ -83,4 +83,17 @@
   overflow-x: hidden;
   position: relative;
   top: 40px;
+}
+
+.user-status {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: rgb(71, 117, 71);
+}
+
+.user-status.online {
+  background-color: rgb(28, 240, 28);
+  box-shadow: 0 0 10px rgba(28, 240, 28, 0.8);
 }

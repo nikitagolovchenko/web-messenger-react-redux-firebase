@@ -2,6 +2,7 @@ import { userConstants } from '../actions/constants';
 
 const initState = {
   users: [],
+  conversations: [],
 };
 
 const userReducer = (state = initState, action) => {
@@ -12,6 +13,11 @@ const userReducer = (state = initState, action) => {
       return {
         ...state,
         users: action.payload.users,
+      };
+    case userConstants.GET_REALTIME_MESSAGES:
+      return {
+        ...state,
+        conversations: action.payload.conversations,
       };
     default:
       return state;
